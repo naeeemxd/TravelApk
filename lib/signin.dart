@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tripvs/otpauthui.dart';
 
 void main() {
@@ -115,7 +116,12 @@ class SignInScreen extends StatelessWidget {
                       ),
                       padding: EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool(
+                          'isLoggedIn', true); // Save login status
+                      // Navigator.pushReplacementNamed(context, '/home');
                       Navigator.push(
                         context,
                         MaterialPageRoute(

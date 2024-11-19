@@ -79,7 +79,7 @@ class FavoritePlacesPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final place = places[index];
             final imageUrl = place['imageUrl'] ??
-                'https://via.placeholder.com/150'; // Fallback image
+                'https://th.bing.com/th/id/OIP.DynQ3JpnpXMjqhaw4sTrqAHaEK?w=329&h=185&c=7&r=0&o=5&dpr=1.5&pid=1.7'; // Fallback image
             final name = place['name'] ?? 'Unknown Place';
             final location = place['location'] ?? 'Unknown Location';
 

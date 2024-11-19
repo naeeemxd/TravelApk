@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:tripvs/signin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
+  void loginpage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,27 +56,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 OnboardingPage(
                   image: 'assets/images/img.png',
-                  title: 'ʟɪꜰᴇ ɪꜱ ꜱʜᴏʀᴛ ᴀɴᴅ ᴛʜᴇ ᴡᴏʀʟᴅ ɪꜱ ᴡɪᴅᴇ',
+                  title: 'Life is short and the world is wide',
                   description:
-                      '𝘈𝘵 𝘍𝘳𝘪𝘦𝘯𝘥𝘴 𝘵𝘰𝘶𝘳𝘴 𝘢𝘯𝘥 𝘵𝘳𝘢𝘷𝘦𝘭, 𝘸𝘦 𝘤𝘶𝘴𝘵𝘰𝘮𝘪𝘻𝘦 𝘳𝘦𝘭𝘪𝘢𝘣𝘭𝘦 𝘢𝘯𝘥 𝘵𝘳𝘶𝘴𝘵𝘸𝘰𝘳𝘵𝘩𝘺 𝘦𝘥𝘶𝘤𝘢𝘵𝘪𝘰𝘯𝘢𝘭 𝘵𝘰𝘶𝘳𝘴 𝘵𝘰 𝘥𝘦𝘴𝘵𝘪𝘯𝘢𝘵𝘪𝘰𝘯𝘴 𝘢𝘭𝘭 𝘰𝘷𝘦𝘳 𝘵𝘩𝘦 𝘸𝘰𝘳𝘭𝘥.',
+                      'At Friends tours and travel, we customize reliable and trustworthy educational tours to destinations all over the world.',
                   buttonText: 'Next',
                   onNext: nextPage,
                 ),
                 OnboardingPage(
                   image: 'assets/images/2.png',
-                  title: 'ɪᴛ’ꜱ ᴀ ʙɪɢ ᴡᴏʀʟᴅ ᴏᴜᴛ ᴛʜᴇʀᴇ, ɢᴏ ᴇxᴘʟᴏʀᴇ',
+                  title: 'It’s a big world out there, go explore',
                   description:
-                      '𝑻𝒐 𝒈𝒆𝒕 𝒕𝒉𝒆 𝒃𝒆𝒔𝒕 𝒐𝒇 𝒚𝒐𝒖𝒓 𝒂𝒅𝒗𝒆𝒏𝒕𝒖𝒓𝒆, 𝒚𝒐𝒖 𝒋𝒖𝒔𝒕 𝒏𝒆𝒆𝒅 𝒕𝒐 𝒍𝒆𝒂𝒗𝒆 𝒂𝒏𝒅 𝒈𝒐 𝒘𝒉𝒆𝒓𝒆 𝒚𝒐𝒖 𝒍𝒊𝒌𝒆. 𝑾𝒆 𝒂𝒓𝒆 𝒘𝒂𝒊𝒕𝒊𝒏𝒈 𝒇𝒐𝒓 𝒚𝒐𝒖.',
+                      'To get the best of your adventure, you just need to leave and go where you like. We are waiting for you.',
                   buttonText: 'Next',
                   onNext: nextPage,
                 ),
                 OnboardingPage(
                   image: 'assets/images/image.png',
-                  title: 'ᴘᴇᴏᴘʟᴇ ᴅᴏɴ’ᴛ ᴛᴀᴋᴇ ᴛʀɪᴘꜱ, ᴛʀɪᴘꜱ ᴛᴀᴋᴇ ᴘᴇᴏᴘʟᴇ',
+                  title: 'People don’t take trips, trips take people',
                   description:
-                      '𝑻𝒐 𝒈𝒆𝒕 𝒕𝒉𝒆 𝒃𝒆𝒔𝒕 𝒐𝒇 𝒚𝒐𝒖𝒓 𝒂𝒅𝒗𝒆𝒏𝒕𝒖𝒓𝒆, 𝒚𝒐𝒖 𝒋𝒖𝒔𝒕 𝒏𝒆𝒆𝒅 𝒕𝒐 𝒍𝒆𝒂𝒗𝒆 𝒂𝒏𝒅 𝒈𝒐 𝒘𝒉𝒆𝒓𝒆 𝒚𝒐𝒖 𝒍𝒊𝒌𝒆. 𝑾𝒆 𝒂𝒓𝒆 𝒘𝒂𝒊𝒕𝒊𝒏𝒈 𝒇𝒐𝒓 𝒚𝒐𝒖.',
+                      'To get the best of your adventure, you just need to leave and go where you like. We are waiting for you.',
                   buttonText: 'Get Started',
-                  onNext: nextPage,
+                  onNext: loginpage,
                 ),
               ],
             ),
@@ -103,6 +111,7 @@ class OnboardingPage extends StatelessWidget {
     required this.buttonText,
     required this.onNext,
   });
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -113,7 +122,7 @@ class OnboardingPage extends StatelessWidget {
           Image.asset(
             image,
             fit: BoxFit.cover,
-          ),
+          ), // Replace with your asset paths
           const SizedBox(height: 24),
           Text(
             title,
@@ -130,13 +139,21 @@ class OnboardingPage extends StatelessWidget {
             style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: onNext,
-            child: Text(buttonText),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: onNext,
+              child: Text(
+                buttonText,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),

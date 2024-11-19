@@ -88,7 +88,7 @@ class ExploreScreen extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
             backgroundImage: NetworkImage(
-                'https://via.placeholder.com/150'), // Replace with your avatar image
+                'https://i.postimg.cc/hvCvRj8p/th.jpg'), // Replace with your avatar image
           ),
         ),
         actions: [
@@ -158,7 +158,8 @@ class ExploreScreen extends StatelessWidget {
                     title: "Destination ${index + 1}",
                     subtitle: "Location, Country",
                     rating: 4.7,
-                    imageUrl: "https://via.placeholder.com/400",
+                    imageUrl:
+                        "https://nofilmschool.com/sites/default/files/styles/article_wide/public/bigstock.jpg?itok=Snv4I36d",
                   );
                 },
               ),
