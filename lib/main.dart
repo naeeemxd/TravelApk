@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tripvs/OnboardingScreen.dart';
@@ -5,7 +6,10 @@ import 'package:tripvs/home.dart';
 import 'package:tripvs/profile.dart';
 import 'package:tripvs/signin.dart';
 
-void main() {
+void main() async {
+  // firebse initialization
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
