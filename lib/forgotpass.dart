@@ -5,7 +5,7 @@ void main() {
 }
 
 class ForgotPasswordApp extends StatelessWidget {
-  const ForgotPasswordApp({Key? key}) : super(key: key);
+  const ForgotPasswordApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class ForgotPasswordApp extends StatelessWidget {
 }
 
 class ForgotPasswordScreen extends StatelessWidget {
-  ForgotPasswordScreen({Key? key}) : super(key: key);
+  ForgotPasswordScreen({super.key});
 
   final TextEditingController emailController = TextEditingController();
 

@@ -9,7 +9,7 @@ void main() {
 }
 
 class OTPVerificationApp extends StatelessWidget {
-  const OTPVerificationApp({Key? key}) : super(key: key);
+  const OTPVerificationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +21,8 @@ class OTPVerificationApp extends StatelessWidget {
 }
 
 class OTPVerificationScreen extends StatefulWidget {
+  const OTPVerificationScreen({super.key});
+
   @override
   State<OTPVerificationScreen> createState() => _OTPVerificationScreenState();
 }

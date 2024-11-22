@@ -5,6 +5,8 @@ void main() {
 }
 
 class ScheduleApp extends StatelessWidget {
+  const ScheduleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,6 +17,8 @@ class ScheduleApp extends StatelessWidget {
 }
 
 class ScheduleScreen extends StatelessWidget {
+  const ScheduleScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,12 +26,12 @@ class ScheduleScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "Schedule",
           style: TextStyle(color: Colors.black),
         ),
-        leading: Icon(Icons.arrow_back, color: Colors.black),
-        actions: [
+        leading: const Icon(Icons.arrow_back, color: Colors.black),
+        actions: const [
           Icon(Icons.notifications_none, color: Colors.black),
         ],
       ),
@@ -41,11 +45,11 @@ class ScheduleScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "22 October",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(7, (index) {
@@ -84,10 +88,10 @@ class ScheduleScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           // My Schedule
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -102,11 +106,11 @@ class ScheduleScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           // Schedule List
           Expanded(
             child: ListView(
-              children: [
+              children: const [
                 ScheduleCard(
                   imagePath: 'assets/images/sunset-2501727_960_720.webp',
                   title: 'Varanasi, Uttar Pradesh',
@@ -141,7 +145,7 @@ class ScheduleCard extends StatelessWidget {
   final String location;
   final String date;
 
-  const ScheduleCard({
+  const ScheduleCard({super.key, 
     required this.imagePath,
     required this.title,
     required this.location,
@@ -161,16 +165,16 @@ class ScheduleCard extends StatelessWidget {
             child: Image.asset(imagePath,
                 width: 60, height: 60, fit: BoxFit.cover),
           ),
-          title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(location),
-              SizedBox(height: 4),
-              Text(date, style: TextStyle(color: Colors.grey)),
+              const SizedBox(height: 4),
+              Text(date, style: const TextStyle(color: Colors.grey)),
             ],
           ),
-          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         ),
       ),
     );

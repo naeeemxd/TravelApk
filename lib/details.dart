@@ -1,192 +1,200 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
+class DestinationDetailsPage extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final double rating;
+  final String imageUrl;
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: DetailsScreen(),
-    );
-  }
-}
+  const DestinationDetailsPage({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.rating,
+    required this.imageUrl,
+  });
 
-class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Top Image with AppBar overlay
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 300,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                      'https://i.postimg.cc/W4ZdjrqK/image.png'), // Replace with your image URL
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // SizedBox(
+            //   height: 30,
+            // ),
+            // Image Section
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  imageUrl,
+                  height: 250,
+                  width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.arrow_back, color: Colors.black),
-                      ),
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.favorite_border, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ),
-          ),
-          // Bottom section
-          Positioned(
-            top: 260,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-              ),
+            const SizedBox(height: 16),
+            // Title and subtitle
+            // Text(
+            //   title,
+            //   style: const TextStyle(
+            //     fontSize: 24,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            const SizedBox(height: 16),
+
+            // Destination Info Section
+            Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Destination Title and Info
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Niladri Reservoir",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Tekergat, Sunamganj",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://via.placeholder.com/150'), // Replace with avatar URL
-                      ),
-                    ],
+                  // Title
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(height: 16),
-                  // Ratings, Price, and Location
+                  const SizedBox(height: 8),
+
+                  // Subtitle
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Rating Row
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.orange, size: 16),
-                      SizedBox(width: 4),
-                      Text("Tekergat"),
-                      Spacer(),
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.orange, size: 16),
-                          SizedBox(width: 4),
-                          Text(
-                            "4.7",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(" (2498)", style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
-                      Spacer(),
+                      const Icon(Icons.star, color: Colors.orange, size: 24),
+                      const SizedBox(width: 8),
                       Text(
-                        "\$59/Person",
-                        style: TextStyle(
-                          color: Colors.blue,
+                        rating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  // Image Icons Carousel
-                  SizedBox(
-                    height: 60,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: List.generate(
-                        5,
-                        (index) => Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://via.placeholder.com/100'), // Replace with images
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  // About Section
-                  Text(
+                  const SizedBox(height: 16),
+
+                  // Description Section
+                  const Text(
                     "About Destination",
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "You will get a complete travel package on the beaches. Packages in the form of airline tickets, recommended hotel rooms, transportation, and more. Have you ever been on holiday to the Greek...",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  SizedBox(height: 4),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Read More",
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                  // Book Now Button
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        "Book Now",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Discover the beauty and serenity of this destination. "
+                    "From its picturesque views to its cultural richness, "
+                    "it offers an unforgettable experience.",
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 16),
+
+            // Action Section
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //   child: ElevatedButton(
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: Colors.orange,
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       padding: const EdgeInsets.symmetric(vertical: 16),
+            //     ),
+            //     onPressed: () {
+            //       // Handle booking logic
+            //       showDialog(
+            //         context: context,
+            //         builder: (context) => AlertDialog(
+            //           title: const Text("Booking Confirmation"),
+            //           content: const Text(
+            //               "Your booking request has been submitted successfully."),
+            //           actions: [
+            //             TextButton(
+            //               onPressed: () => Navigator.pop(context),
+            //               child: const Text("Close"),
+            //             ),
+            //           ],
+            //         ),
+            //       );
+            //     },
+            //     child: const Text(
+            //       "Book Now",
+            //       style: TextStyle(fontSize: 18, color: Colors.white),
+            //     ),
+            //   ),
+            // ),
+
+            Center(
+              child: SizedBox(
+                width: 380,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Booking Confirmation"),
+                        content: const Text(
+                            "Your booking request has been submitted successfully."),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Close"),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  // child: _isLoading
+                  //     ? const CircularProgressIndicator(
+                  //         valueColor:
+                  //             AlwaysStoppedAnimation<Color>(Colors.white),
+                  //       )
+                  //     : const Text(
+                  //         "Sign In",
+                  //         style:
+                  //             TextStyle(fontSize: 16, color: Colors.white),
+                  //       ),
+                  child: const Text(
+                    "Book Now",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

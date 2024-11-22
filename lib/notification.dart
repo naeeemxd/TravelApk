@@ -5,7 +5,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +17,8 @@ class MyApp extends StatelessWidget {
 }
 
 class NotificationPage extends StatelessWidget {
+  const NotificationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -63,7 +65,7 @@ class NotificationPage extends StatelessWidget {
 }
 
 class NotificationList extends StatelessWidget {
-  const NotificationList({Key? key}) : super(key: key);
+  const NotificationList({super.key});
 
   final List<Map<String, String>> notifications = const [
     {'title': 'Super Offer', 'subtitle': 'Get 60% off in our first booking', 'time': 'Sun, 12:40 PM'},

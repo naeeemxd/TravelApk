@@ -7,7 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
 }
 
 class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
+
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
@@ -84,7 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           SmoothPageIndicator(
             controller: _controller,
             count: 3,
-            effect: WormEffect(
+            effect: const WormEffect(
               activeDotColor: Colors.blue,
               dotHeight: 10,
               dotWidth: 10,
@@ -104,7 +106,7 @@ class OnboardingPage extends StatelessWidget {
   final String buttonText;
   final VoidCallback onNext;
 
-  const OnboardingPage({
+  const OnboardingPage({super.key, 
     required this.image,
     required this.title,
     required this.description,
@@ -147,13 +149,13 @@ class OnboardingPage extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: onNext,
               child: Text(
                 buttonText,
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),

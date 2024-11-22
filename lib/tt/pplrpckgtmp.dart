@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,41 +20,50 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class PopularPackagesScreen extends StatefulWidget {
+class PopularPackagesScreen extends StatelessWidget {
   const PopularPackagesScreen({Key? key}) : super(key: key);
 
   @override
-  State<PopularPackagesScreen> createState() => _PopularPackagesScreenState();
-}
-
-class _PopularPackagesScreenState extends State<PopularPackagesScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _debugFirestoreData(); // Debugging function added here
-  }
-
-  Future<void> _debugFirestoreData() async {
-    try {
-      // Fetch all documents from the `destinations` collection
-      final snapshot =
-          await FirebaseFirestore.instance.collection('packagess').get();
-
-      if (snapshot.docs.isEmpty) {
-        print('Firestore: No documents found in the `packages` collection.');
-      } else {
-        print('Firestore: packages retrieved successfully:');
-        for (var doc in snapshot.docs) {
-          print(doc.data());
-        }
-      }
-    } catch (e) {
-      print('Error accessing Firestore: $e');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final packages = [
+      {
+        "imageUrl":
+            "https://th.bing.com/th?id=OLC.WwP1SNdyLXq%2feQ480x360&w=210&h=140&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+        "title": "Taj Mahal, Agra",
+        "date": "12 Dec - 14 Dec",
+        "rating": 4.8,
+        "persons": 20,
+        "price": 15000
+      },
+      {
+        "imageUrl":
+            "https://th.bing.com/th/id/OIP.ER2OmFFsqNnQujjePjET_wHaFt?pid=ImgDet&w=192&h=148&c=7&dpr=1.5",
+        "title": "Jaipur, Rajasthan",
+        "date": "20 Dec - 25 Dec",
+        "rating": 4.5,
+        "persons": 18,
+        "price": 20000
+      },
+      {
+        "imageUrl":
+            "https://th.bing.com/th/id/OIP.euV7CrNJeXDDX0-2XsmDPwHaE8?w=272&h=182&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+        "title": "Goa Beaches",
+        "date": "5 Jan - 10 Jan",
+        "rating": 4.7,
+        "persons": 25,
+        "price": 30000
+      },
+      {
+        "imageUrl":
+            "https://nofilmschool.com/sites/default/files/styles/article_wide/public/bigstock.jpg?itok=Snv4I36d",
+        "title": "Darjeeling, WB",
+        "date": "12 Jan - 15 Jan",
+        "rating": 4.6,
+        "persons": 22,
+        "price": 18000
+      },
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -78,45 +85,21 @@ class _PopularPackagesScreenState extends State<PopularPackagesScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('packagess')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  print("Error fetching packages: ${snapshot.error}");
-                  return const Center(child: Text("Error loading packages"));
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  print("No data found in 'packages' collection");
-                  return const Center(child: Text("No packages found"));
-                }
-
-                final packages = snapshot.data!.docs;
-                packages.forEach((doc) {
-                  print(
-                      "Package Data: ${doc.data()}"); // Print package data for debugging
-                });
-
-                return ListView.builder(
-                  itemCount: packages.length,
-                  itemBuilder: (context, index) {
-                    final package = packages[index];
-                    return _PackageCard(
-                      imageUrl: package['imageUrl'] ?? "Unknown",
-                      title: package['title'] ?? "Unknown",
-                      date: package['date'] ?? "Unknown",
-                      rating: (package['rating'] ?? 0.0).toDouble(),
-                      persons: package['persons'] ?? 0,
-                      price: package['price'] ?? 0,
-                    );
-                  },
-                );
-              },
-            )),
+              child: ListView.builder(
+                itemCount: packages.length,
+                itemBuilder: (context, index) {
+                  final package = packages[index];
+                  return _PackageCard(
+                    imageUrl: package["imageUrl"] as String,
+                    title: package["title"] as String,
+                    date: package["date"] as String,
+                    rating: package["rating"] as double,
+                    persons: package["persons"] as int,
+                    price: package["price"] as int,
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -158,12 +141,6 @@ class _PackageCard extends StatelessWidget {
               width: 100,
               height: 100,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 100,
-                height: 100,
-                color: Colors.grey,
-                child: const Icon(Icons.broken_image),
-              ),
             ),
           ),
           Expanded(
