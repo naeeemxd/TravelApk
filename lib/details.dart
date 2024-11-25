@@ -176,16 +176,7 @@ class DestinationDetailsPage extends StatelessWidget {
                       ),
                     );
                   },
-                  // child: _isLoading
-                  //     ? const CircularProgressIndicator(
-                  //         valueColor:
-                  //             AlwaysStoppedAnimation<Color>(Colors.white),
-                  //       )
-                  //     : const Text(
-                  //         "Sign In",
-                  //         style:
-                  //             TextStyle(fontSize: 16, color: Colors.white),
-                  //       ),
+
                   child: const Text(
                     "Book Now",
                     style: TextStyle(fontSize: 18, color: Colors.white),

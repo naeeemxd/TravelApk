@@ -57,19 +57,19 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.home),
-            label: "",
+            label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.calendar),
-            label: "",
+            label: "Schedule",
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.search),
-            label: "",
+            label: "Search",
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.user),
-            label: "",
+            label: "Profile",
           ),
         ],
       ),
@@ -82,10 +82,15 @@ class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<List<Map<String, dynamic>>> fetchCollection(String collection) async {
-    final QuerySnapshot snapshot = await _db.collection(collection).get();
-    return snapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
+    try {
+      final QuerySnapshot snapshot = await _db.collection(collection).get();
+      return snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+    } catch (e) {
+      print("Error fetching collection: $e");
+      return [];
+    }
   }
 }
 
@@ -165,6 +170,7 @@ class ExploreScreen extends StatelessWidget {
 }
 
 // Best Destination Section
+// Best Destination Section
 class BestDestinationSection extends StatelessWidget {
   final FirestoreService firestoreService = FirestoreService();
 
@@ -178,6 +184,9 @@ class BestDestinationSection extends StatelessWidget {
         }
         if (snapshot.hasError) {
           return const Center(child: Text('Error loading destinations'));
+        }
+        if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No destinations available.'));
         }
         final destinations = snapshot.data!;
         return SizedBox(
@@ -193,7 +202,7 @@ class BestDestinationSection extends StatelessWidget {
                 rating: (destination['rating'] as num?)?.toDouble() ?? 0.0,
                 imageUrl: destination['imageUrl'] ??
                     'https://via.placeholder.com/150',
-                about: destination['about'] ?? 'No information available.',
+                details: destination['details'] ?? 'No information available.',
               );
             },
           ),
@@ -218,6 +227,9 @@ class SpecialTripOffersSection extends StatelessWidget {
         if (snapshot.hasError) {
           return const Center(child: Text('Error loading offers'));
         }
+        if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No special offers available.'));
+        }
         final offers = snapshot.data!;
         return SizedBox(
           height: 240,
@@ -232,7 +244,7 @@ class SpecialTripOffersSection extends StatelessWidget {
                 price: (offer['price'] as num?)?.toDouble() ?? 0.0,
                 imageUrl:
                     offer['imageUrl'] ?? 'https://via.placeholder.com/150',
-                about: offer['about'] ?? 'No information available.',
+                details: offer['details'] ?? 'No information available.',
               );
             },
           ),
@@ -242,13 +254,13 @@ class SpecialTripOffersSection extends StatelessWidget {
   }
 }
 
-// Reusable Widgets
+// Reusable Widgets for Cards and Ads
 class DestinationCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final double rating;
   final String imageUrl;
-  final String about;
+  final String details;
 
   const DestinationCard({
     super.key,
@@ -256,7 +268,7 @@ class DestinationCard extends StatelessWidget {
     required this.subtitle,
     required this.rating,
     required this.imageUrl,
-    required this.about,
+    required this.details,
   });
 
   @override
@@ -271,7 +283,7 @@ class DestinationCard extends StatelessWidget {
               subtitle: subtitle,
               rating: rating,
               imageUrl: imageUrl,
-              about: about,
+              details: details,
             ),
           ),
         );
@@ -309,15 +321,29 @@ class DestinationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(subtitle, style: const TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 4),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  Text(subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      )),
                   Row(
                     children: [
-                      const Icon(Icons.star, size: 16, color: Colors.orange),
-                      const SizedBox(width: 4),
-                      Text(rating.toStringAsFixed(1),
-                          style: const TextStyle(color: Colors.grey)),
+                      Icon(
+                        Icons.star,
+                        color: Colors.orange[700],
+                        size: 16,
+                      ),
+                      Text(
+                        '$rating',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.orange,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -330,12 +356,13 @@ class DestinationCard extends StatelessWidget {
   }
 }
 
+// Trip Package Ad Widget
 class TripPackageAd extends StatelessWidget {
   final String title;
   final String subtitle;
   final double price;
   final String imageUrl;
-  final String about;
+  final String details;
 
   const TripPackageAd({
     super.key,
@@ -343,7 +370,7 @@ class TripPackageAd extends StatelessWidget {
     required this.subtitle,
     required this.price,
     required this.imageUrl,
-    required this.about,
+    required this.details,
   });
 
   @override
@@ -353,18 +380,18 @@ class TripPackageAd extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SpecialTripDetails(
+            builder: (context) => TripDetails(
               title: title,
               subtitle: subtitle,
               price: price,
               imageUrl: imageUrl,
-              about: about,
+              details: details,
             ),
           ),
         );
       },
       child: Container(
-        width: 200,
+        width: 220,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -385,7 +412,7 @@ class TripPackageAd extends StatelessWidget {
                   const BorderRadius.vertical(top: Radius.circular(16)),
               child: Image.network(
                 imageUrl,
-                height: 150,
+                height: 140,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -396,13 +423,93 @@ class TripPackageAd extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(subtitle, style: const TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 4),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  Text(subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      )),
+                  Text('\$${price.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// DestinationDetails & TripDetails remain the same as before, just make sure to use 'details' field wherever necessary.
+
+class DestinationDetails extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final double rating;
+  final String imageUrl;
+  final String details;
+
+  const DestinationDetails({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.rating,
+    required this.imageUrl,
+    required this.details,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.network(imageUrl),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    '\$${price.toStringAsFixed(2)}',
+                    title,
                     style: const TextStyle(
-                        color: Colors.orange, fontWeight: FontWeight.bold),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(subtitle, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Colors.orange,
+                        size: 24,
+                      ),
+                      Text(
+                        '$rating',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    details,
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),
@@ -414,115 +521,20 @@ class TripPackageAd extends StatelessWidget {
   }
 }
 
-class DestinationDetails extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final double rating;
-  final String imageUrl;
-  final String about;
-
-  const DestinationDetails({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.rating,
-    required this.imageUrl,
-    required this.about,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                imageUrl,
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(title,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text(subtitle,
-                style: const TextStyle(fontSize: 18, color: Colors.grey)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.star, color: Colors.orange),
-                const SizedBox(width: 4),
-                Text(rating.toStringAsFixed(1),
-                    style: const TextStyle(fontSize: 18)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(about, style: const TextStyle(fontSize: 16)),
-            SizedBox(height: 200),
-            Center(
-              child: SizedBox(
-                width: 380,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Booking Confirmation"),
-                        content: const Text(
-                            "Your booking request has been submitted successfully."),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("Close"),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Book Now",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SpecialTripDetails extends StatelessWidget {
+class TripDetails extends StatelessWidget {
   final String title;
   final String subtitle;
   final double price;
   final String imageUrl;
-  final String about;
+  final String details;
 
-  const SpecialTripDetails({
+  const TripDetails({
     super.key,
     required this.title,
     required this.subtitle,
     required this.price,
     required this.imageUrl,
-    required this.about,
+    required this.details,
   });
 
   @override
@@ -530,70 +542,39 @@ class SpecialTripDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                imageUrl,
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(title,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text(subtitle,
-                style: const TextStyle(fontSize: 18, color: Colors.grey)),
-            const SizedBox(height: 8),
-            Text(
-              '\$${price.toStringAsFixed(2)}',
-              style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange),
-            ),
-            const SizedBox(height: 16),
-            Text(about, style: const TextStyle(fontSize: 16)),
-            SizedBox(height: 200),
-            Center(
-              child: SizedBox(
-                width: 380,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            Image.network(imageUrl),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Booking Confirmation"),
-                        content: const Text(
-                            "Your booking request has been submitted successfully."),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("Close"),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Book Now",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  Text(subtitle, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 8),
+                  Text(
+                    '\$$price',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  Text(
+                    details,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
             ),
           ],

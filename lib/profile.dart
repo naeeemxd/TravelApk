@@ -131,12 +131,9 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Options list with various features (e.g., Profile, Bookmarked, Log out)
-                _buildOption(Icons.person, 'Profile', () {}),
-                _buildOption(Icons.bookmark, 'Bookmarked', () {}),
+                _buildOption(Icons.bookmark, 'Favorites', () {}),
                 _buildOption(Icons.history, 'Previous Trips', () {}),
                 _buildOption(Icons.logout, 'Log out', () => _logout(context)),
-                _buildOption(Icons.info, 'Version', () {}),
               ],
             ),
           ),
