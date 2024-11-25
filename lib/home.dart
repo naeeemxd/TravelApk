@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tripvs/calander.dart';
-import 'package:tripvs/details.dart';
 import 'package:tripvs/popularpackages.dart';
 import 'package:tripvs/profile.dart';
 
@@ -78,6 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// Firestore Service
+class FirestoreService {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  Future<List<Map<String, dynamic>>> fetchCollection(String collection) async {
+    final QuerySnapshot snapshot = await _db.collection(collection).get();
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
+}
+
 // Explore Screen
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -132,18 +143,13 @@ class ExploreScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Best Destination Section
               const Text(
                 "Best Destination",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 16),
               BestDestinationSection(),
-
               const SizedBox(height: 25),
-
-              // Special Trip Offers Section
               const Text(
                 "Special Trip Offers!",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -158,19 +164,6 @@ class ExploreScreen extends StatelessWidget {
   }
 }
 
-// Firestore Service
-class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-
-  Future<List<Map<String, dynamic>>> fetchCollection(String collection) async {
-    final QuerySnapshot snapshot = await _db.collection(collection).get();
-    return snapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
-  }
-}
-
-// Best Destination Section
 // Best Destination Section
 class BestDestinationSection extends StatelessWidget {
   final FirestoreService firestoreService = FirestoreService();
@@ -195,10 +188,12 @@ class BestDestinationSection extends StatelessWidget {
             itemBuilder: (context, index) {
               final destination = destinations[index];
               return DestinationCard(
-                title: destination['title'],
-                subtitle: destination['subtitle'],
-                rating: (destination['rating'] as num).toDouble(),
-                imageUrl: destination['imageUrl'],
+                title: destination['title'] ?? 'Unknown',
+                subtitle: destination['subtitle'] ?? 'Unknown',
+                rating: (destination['rating'] as num?)?.toDouble() ?? 0.0,
+                imageUrl: destination['imageUrl'] ??
+                    'https://via.placeholder.com/150',
+                about: destination['about'] ?? 'No information available.',
               );
             },
           ),
@@ -232,10 +227,12 @@ class SpecialTripOffersSection extends StatelessWidget {
             itemBuilder: (context, index) {
               final offer = offers[index];
               return TripPackageAd(
-                title: offer['title'],
-                subtitle: offer['subtitle'],
-                price: offer['price'].toDouble(),
-                imageUrl: offer['imageUrl'],
+                title: offer['title'] ?? 'Unknown',
+                subtitle: offer['subtitle'] ?? 'Unknown',
+                price: (offer['price'] as num?)?.toDouble() ?? 0.0,
+                imageUrl:
+                    offer['imageUrl'] ?? 'https://via.placeholder.com/150',
+                about: offer['about'] ?? 'No information available.',
               );
             },
           ),
@@ -251,6 +248,7 @@ class DestinationCard extends StatelessWidget {
   final String subtitle;
   final double rating;
   final String imageUrl;
+  final String about;
 
   const DestinationCard({
     super.key,
@@ -258,6 +256,7 @@ class DestinationCard extends StatelessWidget {
     required this.subtitle,
     required this.rating,
     required this.imageUrl,
+    required this.about,
   });
 
   @override
@@ -267,11 +266,12 @@ class DestinationCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DestinationDetailsPage(
+            builder: (context) => DestinationDetails(
               title: title,
               subtitle: subtitle,
               rating: rating,
               imageUrl: imageUrl,
+              about: about,
             ),
           ),
         );
@@ -316,7 +316,7 @@ class DestinationCard extends StatelessWidget {
                     children: [
                       const Icon(Icons.star, size: 16, color: Colors.orange),
                       const SizedBox(width: 4),
-                      Text(rating.toString(),
+                      Text(rating.toStringAsFixed(1),
                           style: const TextStyle(color: Colors.grey)),
                     ],
                   ),
@@ -335,6 +335,7 @@ class TripPackageAd extends StatelessWidget {
   final String subtitle;
   final double price;
   final String imageUrl;
+  final String about;
 
   const TripPackageAd({
     super.key,
@@ -342,6 +343,7 @@ class TripPackageAd extends StatelessWidget {
     required this.subtitle,
     required this.price,
     required this.imageUrl,
+    required this.about,
   });
 
   @override
@@ -351,11 +353,12 @@ class TripPackageAd extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DestinationDetailsPage(
+            builder: (context) => SpecialTripDetails(
               title: title,
               subtitle: subtitle,
-              rating: price, // Using price as rating for demonstration
+              price: price,
               imageUrl: imageUrl,
+              about: about,
             ),
           ),
         );
@@ -382,7 +385,7 @@ class TripPackageAd extends StatelessWidget {
                   const BorderRadius.vertical(top: Radius.circular(16)),
               child: Image.network(
                 imageUrl,
-                height: 120,
+                height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -397,11 +400,200 @@ class TripPackageAd extends StatelessWidget {
                   Text(subtitle, style: const TextStyle(color: Colors.grey)),
                   const SizedBox(height: 4),
                   Text(
-                    "\$$price",
+                    '\$${price.toStringAsFixed(2)}',
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.orange),
+                        color: Colors.orange, fontWeight: FontWeight.bold),
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DestinationDetails extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final double rating;
+  final String imageUrl;
+  final String about;
+
+  const DestinationDetails({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.rating,
+    required this.imageUrl,
+    required this.about,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                imageUrl,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(subtitle,
+                style: const TextStyle(fontSize: 18, color: Colors.grey)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.star, color: Colors.orange),
+                const SizedBox(width: 4),
+                Text(rating.toStringAsFixed(1),
+                    style: const TextStyle(fontSize: 18)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(about, style: const TextStyle(fontSize: 16)),
+            SizedBox(height: 200),
+            Center(
+              child: SizedBox(
+                width: 380,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Booking Confirmation"),
+                        content: const Text(
+                            "Your booking request has been submitted successfully."),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Close"),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Book Now",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SpecialTripDetails extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final double price;
+  final String imageUrl;
+  final String about;
+
+  const SpecialTripDetails({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.price,
+    required this.imageUrl,
+    required this.about,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                imageUrl,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(subtitle,
+                style: const TextStyle(fontSize: 18, color: Colors.grey)),
+            const SizedBox(height: 8),
+            Text(
+              '\$${price.toStringAsFixed(2)}',
+              style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange),
+            ),
+            const SizedBox(height: 16),
+            Text(about, style: const TextStyle(fontSize: 16)),
+            SizedBox(height: 200),
+            Center(
+              child: SizedBox(
+                width: 380,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Booking Confirmation"),
+                        content: const Text(
+                            "Your booking request has been submitted successfully."),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Close"),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Book Now",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
               ),
             ),
           ],

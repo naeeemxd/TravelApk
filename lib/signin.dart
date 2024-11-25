@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tripvs/adminPage.dart';
 import 'package:tripvs/home.dart';
 import 'package:tripvs/signup.dart';
-import 'package:tripvs/otpauthui.dart';
+// import 'package:tripvs/admin.dart'; // Import your admin page here
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -22,6 +23,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   bool _isLoading = false; // To show loading spinner
 
+  // Admin email
+  final List<String> adminEmails = [
+    "naeemkk10000@gmail.com",
+    'admin@gmail.com'
+  ];
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -37,7 +44,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
       try {
         // Sign in with Firebase
-        await _auth.signInWithEmailAndPassword(
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
@@ -46,11 +53,22 @@ class _SignInScreenState extends State<SignInScreen> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
 
-        // Navigate to OTPVerificationScreen (or another home screen)
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        // Check if the user is an admin
+        final userEmail = userCredential.user?.email ?? "";
+        if (adminEmails.contains(userEmail)) {
+          // Navigate to Admin Page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AdminPage()), // Define your AdminPage
+          );
+        } else {
+          // Navigate to Home Page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -232,8 +250,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       IconButton(
                         onPressed: () {},
-                        icon:
-                            const Icon(FontAwesomeIcons.twitter, color: Colors.blue),
+                        icon: const Icon(FontAwesomeIcons.twitter,
+                            color: Colors.blue),
                       ),
                     ],
                   ),
